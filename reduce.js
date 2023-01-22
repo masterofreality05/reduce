@@ -9,12 +9,17 @@ Examples:
 
 function extractValue(arr, key) {
 
-    let emptyArray = []
-    return arr.reduce(function(acc,nextval){
-        acc.push(nextval[key]) //for each array element we will push and update what was once an empty array
-        return acc // as the empty array populates and acuumulates we have to update it and pass to the next iteration
 
-    }, emptyArray) //setting our accumulator as an empty array
+    return arr.reduce(function(acc, next, idx){
+        //will return the acc from each callback function which we will define here
+        acc[idx] = arr[idx][key]
+        return acc
+        //we are using the accumulator and writing with the iterable idx
+        //so acc[0] = arr[0]['name] essentially assigns our accumulator and empty arrays first element as the value of our first array element under the key property which name was passed.
+
+
+    },[]) //our second parameter is an empty array which will be the acc
+
     
     }
 
@@ -40,21 +45,26 @@ Examples:
 */
 
 function vowelCount(str){
+
     let insensitive = Array.from(str.toLowerCase())
     let vowels = "aeiou"
+
+   return insensitive.reduce(function(acc,next){
+    if(vowels.indexOf(next) !== -1){
+    if(acc[next]){
+        acc[next] += 1;
+
+    } else {
+        acc[next] = 1;
+
+    }
+} else {
+    null  //if the next character ofthe array is not a vowel (indexOf !== -1) then do nothing
+}
+return acc //after updating our accumulator depending on the conditionals, we still have to return it from the callback to update
+        
+    },{}) //we will set our acc to an empty object which we want to populate 
     
-    return insensitive.reduce(function(acc, next){
-      
-      if(acc[next] && vowels.indexOf(next) !== -1) {
-        acc[next] += 1
-      } else if(vowels.indexOf(next) !== -1) {
-        acc[next] = 1
-      }
-      return acc
-      
-      
-    },{}
-    )
     
   }
 
@@ -96,13 +106,18 @@ Examples:
 */
 
 function addKeyAndValue(arr, key, value) {
-   
-return arr.reduce(function(acc, next ,idx){
 
-    acc[idx][key] = value;
+    return arr.reduce(function(acc,next,idx){
+    
+    acc[idx][key] = value; //our accumulator is an existing array, lets access it with index (starting at 0)
+    //in other words, array item 0.key = assigned to value (adds the property to the object)
+
     return acc
+//lets return and update our accumulator
 
-},arr)
+    },arr) //we are initialiting this function with the array we passed in (we want to add to an existing array)
+   
+
 }
 
 
@@ -140,18 +155,29 @@ Examples:
 
 function partition(arr, callback) {
 
-
-   return arr.reduce(function(acc, next, idx){
+   return arr.reduce(function(acc,next){
+    
+    
     if(callback(next) === true){
         acc[0].push(next)
-        return acc
-    } else{
+    } else {
         acc[1].push(next)
-        return acc
     }
+    return acc
+
+    },[[],[]]) //lets initialize our method with two arrays (we can locate them by acc[0] and acc[1] values passed into will be indexed one step deeper into the scope)
 
 
-   },[[],[]])
+
      
 
 }
+
+/*what happened here after consulting the solutions is that we reduce as a method to return two arrays, one meeting the criteria of the
+callback and the other for those that do not pass. 
+
+our conditional statement evaluates if next (after our initial accumulator of two empty arrays) evaluates to true, 
+and if it does it will be pushed into element one of our accumulator (our passing array) and if it failse it will be passed into the
+second array acc[1]
+after either pushing action we return our new accumular and it will update and populate both arrays one element at a time
+then the reduce function reaches the end and the two full partioned arrays are returned */
